@@ -73,7 +73,7 @@ pipeline {
                     def response = httpRequest(
                         url: 'http://confluence:8090/rest/export/pdf/content/1933321',
                         httpMode: 'GET',
-                        acceptType: 'APPLICATION_PDF',
+                        contentType: 'APPLICATION_JSON',
                         customHeaders: headers,
                         validResponseCodes: '200',
                         consoleLogResponseBody: true,
