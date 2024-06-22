@@ -6,7 +6,7 @@ pipeline {
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
-            "title": "Markdown Test {{date}}",
+            "title": "Jenkins MD {{date}}",
             "space": {
                 "key": "EAI"
             },
