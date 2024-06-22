@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        CONFLUENCE_URL = 'http://confluence:8090/rest/api/content'
-        MARKDOWN_FILE = 'markdown-sample.md'
+        HEADERS = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
+        MARKDOWN_FILE = 'min-markdown.md'
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
@@ -46,14 +46,12 @@ pipeline {
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
                     payload = payload.replace('{{content}}', markdownContent)
 
-                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
-
                     def response = httpRequest(
-                        url: env.CONFLUENCE_URL,
+                        url: 'http://confluence:8090/rest/api/content',
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: payload,
-                        customHeaders: headers,
+                        customHeaders: env.HEADERS,
                         validResponseCodes: '200:201',
                         consoleLogResponseBody: true
                     )
@@ -67,15 +65,11 @@ pipeline {
         stage('Export Confluence PDF') {
             steps {
                 script {
-                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
-
-                    def exportUrl = "http://confluence:8090/rest/export/pdf/content/1933321"
-
                     def response = httpRequest(
-                        url: exportUrl,
+                        url: 'http://confluence:8090/rest/export/pdf/content/1933321',
                         httpMode: 'GET',
                         acceptType: 'APPLICATION_PDF',
-                        customHeaders: headers,
+                        customHeaders: env.HEADERS,
                         validResponseCodes: '200',
                         consoleLogResponseBody: true,
                         outputFile: 'page.pdf'
