@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script {
                     // Lê o conteúdo do arquivo de markdown
-                    def markdownContent = readFile(env.MARKDOWN_FILE).replaceAll('\n', '\\n')
+                    def markdownContent = readFile(env.MARKDOWN_FILE).replaceAll('\n', '\\\\n')
 
                     // Substitui o placeholder no payload template
                     def payload = env.PAYLOAD_TEMPLATE
