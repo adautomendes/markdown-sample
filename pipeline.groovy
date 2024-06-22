@@ -77,11 +77,10 @@ pipeline {
                         customHeaders: headers,
                         validResponseCodes: '200',
                         consoleLogResponseBody: true,
-                        outputFile: 'page.pdf'
+                        outputFile: 'output.pdf'
                     )
 
-                    echo "PDF exportado com sucesso: ${response.status}"
-                    echo "PDF salvo como: page.pdf"
+                    echo "PDF saved as output.pdf"
                 }
             }
         }
@@ -93,6 +92,7 @@ pipeline {
         }
         success {
             echo 'Pipeline concluded successfully.'
+            archiveArtifacts artifacts: 'output.pdf', allowEmptyArchive: true
         }
     }
 }
