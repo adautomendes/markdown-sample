@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        HEADERS = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
-        MARKDOWN_FILE = 'min-markdown.md'
+        MARKDOWN_FILE = 'markdown-sample.md'
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
@@ -46,12 +45,14 @@ pipeline {
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
                     payload = payload.replace('{{content}}', markdownContent)
 
+                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
+
                     def response = httpRequest(
                         url: 'http://confluence:8090/rest/api/content',
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: payload,
-                        customHeaders: env.HEADERS,
+                        customHeaders: headers,
                         validResponseCodes: '200:201',
                         consoleLogResponseBody: true
                     )
@@ -65,11 +66,13 @@ pipeline {
         stage('Export Confluence PDF') {
             steps {
                 script {
+                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
+
                     def response = httpRequest(
                         url: 'http://confluence:8090/rest/export/pdf/content/1933321',
                         httpMode: 'GET',
                         acceptType: 'APPLICATION_PDF',
-                        customHeaders: env.HEADERS,
+                        customHeaders: headers,
                         validResponseCodes: '200',
                         consoleLogResponseBody: true,
                         outputFile: 'page.pdf'
