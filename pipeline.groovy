@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         CONFLUENCE_URL = 'http://confluence:8090/rest/api/content'
+        MARKDOWN_FILE = 'markdown-sample.md'
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
@@ -23,14 +24,12 @@ pipeline {
             }
         }
         '''
-        MARKDOWN_FILE = 'min-markdown.md'
     }
 
     stages {
         stage('Prepare') {
             steps {
                 script {
-                    // Verifica se o arquivo de markdown existe
                     if (!fileExists(env.MARKDOWN_FILE)) {
                         error "File ${env.MARKDOWN_FILE} was not found!"
                     }
@@ -38,20 +37,17 @@ pipeline {
             }
         }
 
-        stage('Send REST Request') {
+        stage('Send MD to Confluence') {
             steps {
                 script {
-                    // Lê o conteúdo do arquivo de markdown
                     def markdownContent = readFile(env.MARKDOWN_FILE).replaceAll('\n', '\\\\n')
 
-                    // Substitui o placeholder no payload template
                     def payload = env.PAYLOAD_TEMPLATE
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
                     payload = payload.replace('{{content}}', markdownContent)
 
                     def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
 
-                    // Envia a requisição POST
                     def response = httpRequest(
                         url: env.CONFLUENCE_URL,
                         httpMode: 'POST',
@@ -62,9 +58,31 @@ pipeline {
                         consoleLogResponseBody: true
                     )
 
-                    // Processa a resposta
                     echo "Response: ${response.status}"
                     echo "Response Body: ${response.content}"
+                }
+            }
+        }
+
+        stage('Export Confluence PDF') {
+            steps {
+                script {
+                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
+
+                    def exportUrl = "http://confluence:8090/rest/export/pdf/content/1933321"
+
+                    def response = httpRequest(
+                        url: exportUrl,
+                        httpMode: 'GET',
+                        acceptType: 'APPLICATION_PDF',
+                        customHeaders: headers,
+                        validResponseCodes: '200',
+                        consoleLogResponseBody: true,
+                        outputFile: 'page.pdf'
+                    )
+
+                    echo "PDF exportado com sucesso: ${response.status}"
+                    echo "PDF salvo como: page.pdf"
                 }
             }
         }
