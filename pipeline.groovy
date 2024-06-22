@@ -32,7 +32,7 @@ pipeline {
                 script {
                     // Verifica se o arquivo de markdown existe
                     if (!fileExists(env.MARKDOWN_FILE)) {
-                        error "Arquivo de markdown não encontrado: ${env.MARKDOWN_FILE}"
+                        error "File ${env.MARKDOWN_FILE} was not found!"
                     }
                 }
             }
@@ -49,12 +49,15 @@ pipeline {
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
                     payload = payload.replace('{{content}}', markdownContent)
 
+                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
+
                     // Envia a requisição POST
                     def response = httpRequest(
                         url: env.CONFLUENCE_URL,
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         requestBody: payload,
+                        customHeaders: headers,
                         validResponseCodes: '200:201',
                         consoleLogResponseBody: true
                     )
