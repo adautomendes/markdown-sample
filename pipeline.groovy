@@ -71,14 +71,15 @@ pipeline {
                     def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
 
                     def response = httpRequest(
-                        url: 'http://confluence:8090/rest/export/pdf/content/1933321',
+                        url: 'http://confluence:8090/wiki/rest/api/content/1015815/export/pdf',
                         httpMode: 'GET',
-                        contentType: 'APPLICATION_JSON',
                         customHeaders: headers,
-                        validResponseCodes: '200',
-                        consoleLogResponseBody: true,
-                        outputFile: 'output.pdf'
+                        acceptType: 'APPLICATION_OCTETSTREAM',
+                        quiet: true,
+                        validResponseCodes: '200'
                     )
+
+                    writeFile file: "output.pdf", text: response.content
 
                     echo "PDF saved as output.pdf"
                 }
