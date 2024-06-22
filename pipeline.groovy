@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        MARKDOWN_FILE = 'markdown-sample.md'
+        MARKDOWN_FILE = 'min-markdown.md'
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
@@ -44,6 +44,8 @@ pipeline {
                     def payload = env.PAYLOAD_TEMPLATE
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
                     payload = payload.replace('{{content}}', markdownContent)
+
+                    echo "${payload}"
 
                     def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
 
