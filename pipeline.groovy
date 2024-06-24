@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Send MARKDOWN to Confluence') {
             steps {
                 script {
