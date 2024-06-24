@@ -6,4 +6,12 @@ Text 1...
 
 Text 2...
 
-`test code 123`
+```javascript
+var oldUnload = window.onbeforeunload;
+window.onbeforeunload = function() {
+    saveCoverage();
+    if (oldUnload) {
+        return oldUnload.apply(this, arguments);
+    }
+};
+```

@@ -21,7 +21,7 @@ pipeline {
                 }
             ],
             "body": {
-                "storage": {
+                "wiki": {
                     "value": "{{markdownContent}}",
                     "representation": "wiki"
                 }
