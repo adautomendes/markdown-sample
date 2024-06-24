@@ -92,7 +92,7 @@ pipeline {
             echo 'The pipeline failed.'
         }
         success {
-            echo 'Pipeline concluded successfully.'
+            echo 'Pipeline concluded successfully!'
             archiveArtifacts artifacts: 'output.pdf', allowEmptyArchive: true
         }
     }
