@@ -1,3 +1,7 @@
+import groovy.json.JsonSlurper
+
+def createdPageId = ''
+
 pipeline {
     agent any
 
@@ -17,8 +21,8 @@ pipeline {
             ],
             "body": {
                 "storage": {
-                    "value": "{{content}}",
-                    "representation": "wiki"
+                    "value": "{{markdownContent}}",
+                    "representation": "storage"
                 }
             }
         }
@@ -43,9 +47,9 @@ pipeline {
 
                     def payload = env.PAYLOAD_TEMPLATE
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
-                    payload = payload.replace('{{content}}', markdownContent)
+                    payload = payload.replace('{{markdownContent}}', markdownContent)
 
-                    echo "Print payload:\n${payload}"
+                    echo "Request payload:\n${payload}"
 
                     def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
 
@@ -58,9 +62,15 @@ pipeline {
                         validResponseCodes: '200:201',
                         consoleLogResponseBody: true
                     )
+                    
+                    def jsonSlurper = new JsonSlurper()
+                    def jsonResponse = jsonSlurper.parseText(response.content)
 
-                    echo "Response: ${response.status}"
-                    echo "Response Body: ${response.content}"
+                    echo "Response status: ${response.status}"
+                    echo "Response payload:\n${response.content}"
+                    echo "Generated page id: ${jsonResponse.id}"
+
+                    createdPageId = jsonResponse.id
                 }
             }
         }
@@ -68,18 +78,11 @@ pipeline {
         stage('Export Confluence PDF') {
             steps {
                 script {
-                    def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
+                    def url = "http://confluence:8090/spaces/flyingpdf/pdfpageexport.action?pageId=${createdPageId}"
 
-                    def response = httpRequest(
-                        url: 'http://confluence:8090/wiki/rest/api/content/2359303/export/pdf',
-                        httpMode: 'GET',
-                        customHeaders: headers,
-                        acceptType: 'APPLICATION_OCTETSTREAM',
-                        quiet: true,
-                        validResponseCodes: '200'
-                    )
-
-                    writeFile file: "output.pdf", text: response.content
+                    sh """
+                        curl -v -L -u "adauto:adauto" -H "X-Atlassian-Token: no-check" "${url}" -o "output.pdf"
+                    """
 
                     echo "PDF saved as output.pdf"
                 }
