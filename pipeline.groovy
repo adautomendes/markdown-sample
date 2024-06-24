@@ -164,8 +164,5 @@ pipeline {
             echo 'Pipeline concluded successfully!'
             archiveArtifacts artifacts: '**/*.pdf', allowEmptyArchive: true
         }
-        always {
-            cleanWs()
-        }
     }
 }
