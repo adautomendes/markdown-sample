@@ -1,6 +1,7 @@
 import groovy.json.JsonSlurper
 
-def createdPageId = ''
+def markdownPageId = ''
+def wikiPageId = ''
 
 pipeline {
     agent any
@@ -76,7 +77,7 @@ pipeline {
                     echo "Response payload:\n${response.content}"
                     echo "Generated page id: ${jsonResponse.id}"
 
-                    createdPageId = jsonResponse.id
+                    markdownPageId = jsonResponse.id
                 }
             }
         }
@@ -112,21 +113,30 @@ pipeline {
                     echo "Response payload:\n${response.content}"
                     echo "Generated page id: ${jsonResponse.id}"
 
-                    createdPageId = jsonResponse.id
+                    wikiPageId = jsonResponse.id
                 }
             }
         }
 
-        stage('Export Created Page to PDF') {
+        stage('Export Created Pages to PDF') {
             steps {
                 script {
-                    def url = "http://confluence:8090/spaces/flyingpdf/pdfpageexport.action?pageId=${createdPageId}"
+                    def url = "http://confluence:8090/spaces/flyingpdf/pdfpageexport.action?pageId=${markdownPageId}"
 
                     sh """
-                        curl -v -L -u "adauto:adauto" -H "X-Atlassian-Token: no-check" "${url}" -o "jenkins.pdf"
+                        curl -v -L -u "adauto:adauto" -H "X-Atlassian-Token: no-check" "${url}" -o "markdown.pdf"
                     """
 
-                    echo "PDF saved as jenkins.pdf"
+                    echo "PDF saved as markdown.pdf"
+                }
+                script {
+                    def url = "http://confluence:8090/spaces/flyingpdf/pdfpageexport.action?pageId=${wikiPageId}"
+
+                    sh """
+                        curl -v -L -u "adauto:adauto" -H "X-Atlassian-Token: no-check" "${url}" -o "wiki.pdf"
+                    """
+
+                    echo "PDF saved as wiki.pdf"
                 }
             }
         }
