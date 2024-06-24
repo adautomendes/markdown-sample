@@ -71,7 +71,7 @@ pipeline {
                     def headers = [[name: 'Authorization', value: 'Bearer NDcyNzIxODQ3ODg4OnZ2mWxAuTG0M2fjvz7zihRShmaQ']]
 
                     def response = httpRequest(
-                        url: 'http://confluence:8090/wiki/rest/api/content/1015815/export/pdf',
+                        url: 'http://confluence:8090/wiki/rest/api/content/2359303/export/pdf',
                         httpMode: 'GET',
                         customHeaders: headers,
                         acceptType: 'APPLICATION_OCTETSTREAM',
