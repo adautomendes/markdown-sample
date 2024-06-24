@@ -1,7 +1,9 @@
-# Header H1
+h1 Header H1
 
 Text 1...
 
-h1. Header H1
+h2. Header H2
 
 Text 2...
+
+`test code`
