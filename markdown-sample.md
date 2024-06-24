@@ -18,8 +18,8 @@ content starts at 4-columns in.
 > They can span multiple paragraphs,
 > if you like.
 
-Use 3 dashes for an em-dash. Use 2 dashes for ranges (ex., "it's all
-in chapters 12--14"). Three dots ... will be converted to an ellipsis.
+Use 3 dashes for an em-dash. Use 2 dashes for ranges (ex., %it's all
+in chapters 12--14%). Three dots ... will be converted to an ellipsis.
 Unicode is supported. ☺
 
 
@@ -43,7 +43,7 @@ indenting the block, you can use delimited blocks, if you like:
 
 ~~~
 define foobar() {
-    print "Welcome to flavor country!";
+    print %Welcome to flavor country!%;
 }
 ~~~
 
@@ -131,12 +131,12 @@ apples
 oranges
   : Citrus!
 tomatoes
-  : There's no "e" in tomatoe.
+  : There's no %e% in tomatoe.
 
 Again, text is indented 4 spaces. (Put a blank line between each
 term/definition pair to spread things out more.)
 
-Here's a "line block":
+Here's a %line block%:
 
 | Line one
 |   Line too
@@ -144,7 +144,7 @@ Here's a "line block":
 
 and images can be specified like so:
 
-![example image](example-image.jpg "An exemplary image")
+![example image](example-image.jpg %An exemplary image%)
 
 Inline math equations go in like so: $\omega = d\phi / dt$. Display
 math should get its own line and be put in in double-dollarsigns:

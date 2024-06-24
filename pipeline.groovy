@@ -6,7 +6,7 @@ pipeline {
     agent any
 
     environment {
-        MARKDOWN_FILE = 'min-markdown.md'
+        MARKDOWN_FILE = 'markdown-sample.md'
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
@@ -22,7 +22,7 @@ pipeline {
             "body": {
                 "storage": {
                     "value": "{{markdownContent}}",
-                    "representation": "storage"
+                    "representation": "wiki"
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
         stage('Send MD to Confluence') {
             steps {
                 script {
-                    def markdownContent = readFile(env.MARKDOWN_FILE).replaceAll('\n', '\\\\n')
+                    def markdownContent = readFile(env.MARKDOWN_FILE).replaceAll('"', '\\"').replaceAll('\n', '\\\\n')
 
                     def payload = env.PAYLOAD_TEMPLATE
                     payload = payload.replace('{{date}}', new Date().format("yyyyMMddHHmmss"))
