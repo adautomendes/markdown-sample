@@ -6,7 +6,7 @@ pipeline {
     agent any
 
     environment {
-        MARKDOWN_FILE = 'markdown-sample.md'
+        MARKDOWN_FILE = 'min-markdown.md'
         PAYLOAD_TEMPLATE = '''
         {
             "type": "page",
