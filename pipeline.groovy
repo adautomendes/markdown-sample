@@ -111,7 +111,7 @@ pipeline {
         }
         success {
             echo 'Pipeline concluded successfully!'
-            archiveArtifacts artifacts: 'output.pdf', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/*.*', allowEmptyArchive: true
         }
     }
 }
