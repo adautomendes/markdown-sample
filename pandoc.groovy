@@ -26,6 +26,15 @@ pipeline {
                 }
             }
         }
+        stage('Convert markdown to PDF') {
+            steps {
+                script {
+                    sh """
+                        pandoc markdown-sample.md -o markdown-sample.pdf
+                    """
+                }
+            }
+        }
     }
     post {
         failure {
@@ -33,7 +42,7 @@ pipeline {
         }
         success {
             echo 'Pipeline concluded successfully!'
-            archiveArtifacts artifacts: '**/*.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/*.html,**/*.pdf', allowEmptyArchive: true
         }
     }
 }
