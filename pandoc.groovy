@@ -17,7 +17,7 @@ pipeline {
                 }
             }
         }
-        stage('Convert markdown to HTML') {
+        stage('Convert MD to HTML') {
             steps {
                 script {
                     sh """
@@ -26,7 +26,7 @@ pipeline {
                 }
             }
         }
-        stage('Convert markdown to PDF') {
+        stage('Convert MD to PDF') {
             steps {
                 script {
                     sh """
@@ -35,7 +35,7 @@ pipeline {
                 }
             }
         }
-        stage('Convert markdown to DOCX') {
+        stage('Convert MD to DOCX') {
             steps {
                 script {
                     sh """
