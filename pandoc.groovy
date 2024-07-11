@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    agent any
     stages {
         stage('Verify Files in Jenkins') {
             steps {
@@ -8,23 +8,32 @@ pipeline {
                 }
             }
         }
-        stage('Verify Files in Docker') {
+        stage('Test if pandoc is available') {
             steps {
                 script {
                     sh """
-                        docker run --rm --volume "\$(pwd):/data" alpine ls -la /data
+                        pandoc -v
                     """
                 }
             }
         }
-        stage('Docker') {
+        stage('Convert markdown to HTML') {
             steps {
                 script {
                     sh """
-                        docker run --rm --volume "\$(pwd):/data" --user \$(id -u):\$(id -g) pandoc/core /data/markdown-sample.md -o /data/markdown-sample.html
+                        pandoc markdown-sample.md -o markdown-sample.html
                     """
                 }
             }
+        }
+    }
+    post {
+        failure {
+            echo 'The pipeline failed.'
+        }
+        success {
+            echo 'Pipeline concluded successfully!'
+            archiveArtifacts artifacts: '**/*.html', allowEmptyArchive: true
         }
     }
 }
