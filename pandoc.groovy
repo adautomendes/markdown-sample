@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        pandoc markdown-sample.md -o markdown-sample.pdf
+                        pandoc markdown-sample.html -o markdown-sample.pdf
                     """
                 }
             }
