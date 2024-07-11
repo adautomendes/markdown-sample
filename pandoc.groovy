@@ -1,31 +1,30 @@
-import groovy.json.JsonSlurper
-
 pipeline {
-    agent any
-
-    environment {
-        TESTE='teste'
-    }
-
+    agent any 
     stages {
-        stage('Docker') {
+        stage('Verify Files in Jenkins') {
+            steps {
+                script {
+                    sh 'ls -la $(pwd)'
+                }
+            }
+        }
+        stage('Verify Files in Docker') {
             steps {
                 script {
                     sh """
-                        docker run --rm --volume "\$(pwd):/data" --user \$(id -u):\$(id -g) pandoc/core markdown-sample.md -o markdown-sample.html
+                        docker run --rm --volume "\$(pwd):/data" alpine ls -la /data
                     """
                 }
             }
         }
-    }
-
-    post {
-        failure {
-            echo 'The pipeline failed.'
-        }
-        success {
-            echo 'Pipeline concluded successfully!'
-            archiveArtifacts artifacts: '**/*.pdf', allowEmptyArchive: true
+        stage('Docker') {
+            steps {
+                script {
+                    sh """
+                        docker run --rm --volume "\$(pwd):/data" --user \$(id -u):\$(id -g) pandoc/core /data/markdown-sample.md -o /data/markdown-sample.html
+                    """
+                }
+            }
         }
     }
 }
