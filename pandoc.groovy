@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker run --rm --volume "$(pwd):/data" --user $(id -u):$(id -g) pandoc/core markdown-sample.md -o markdown-sample.html
+                        docker run --rm --volume "\$(pwd):/data" --user \$(id -u):\$(id -g) pandoc/core markdown-sample.md -o markdown-sample.html
                     """
                 }
             }
