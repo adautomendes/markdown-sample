@@ -13,6 +13,7 @@ pipeline {
                 script {
                     sh """
                         docker ps -a
+                        ls $(pwd)
                     """
                 }
             }
