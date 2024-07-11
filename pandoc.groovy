@@ -30,7 +30,16 @@ pipeline {
             steps {
                 script {
                     sh """
-                        pandoc markdown-sample.html -o markdown-sample.pdf
+                        pandoc markdown-sample.md -o markdown-sample.pdf
+                    """
+                }
+            }
+        }
+        stage('Convert markdown to DOCX') {
+            steps {
+                script {
+                    sh """
+                        pandoc markdown-sample.md -o markdown-sample.docx
                     """
                 }
             }
@@ -42,7 +51,7 @@ pipeline {
         }
         success {
             echo 'Pipeline concluded successfully!'
-            archiveArtifacts artifacts: '**/*.html,**/*.pdf', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/*.html,**/*.pdf,**/*.docx', allowEmptyArchive: true
         }
     }
 }
