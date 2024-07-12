@@ -17,45 +17,22 @@ pipeline {
                 }
             }
         }
-        stage('Convert input file') {
-            parallel {
-                stage('Convert MD to HTML') {
-                    steps {
-                        script {
-                            sh """
-                                pandoc ${inputFile} -o out-markdown-sample.html
-                            """
+        stage('Convert MD') {
+            steps {
+                script {
+                    def outputTypesList = outputTypes.split(',')
+                    def outputFileName = "out-${inputFile.split("\\.")[0]}"
+
+                    for (outputType in outputTypesList) {
+                        if (!fileExists(inputFile)) {
+                            error "File ${inputFile} was not found!"
                         }
-                    }
-                }
-                stage('Convert MD to PDF') {
-                    steps {
-                        script {
-                            sh """
-                                pandoc ${inputFile} -o out-markdown-sample.pdf
-                            """
-                        }
-                    }
-                }
-                stage('Convert MD to DOCX') {
-                    steps {
-                        script {
-                            sh """
-                                pandoc ${inputFile} -o out-markdown-sample.docx
-                            """
-                        }
-                    }
-                }
-                stage('Custom convert') {
-                    steps {
-                        script {
-                            if (!fileExists(inputFile)) {
-                                error "File ${inputFile} was not found!"
-                            }
-                            sh """
-                                pandoc ${inputFile} -o out-markdown-sample.${outputType}
-                            """
-                        }
+
+                        sh """
+                            pandoc ${inputFile} -o ${outputFileName}.${outputType.trim()}
+                        """
+
+                        echo "Converted ${inputFile} to ${outputFileName}.${outputType.trim()}"
                     }
                 }
             }
