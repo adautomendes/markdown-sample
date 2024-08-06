@@ -154,6 +154,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Export PReB to PDF') {
+            steps {
+                script {
+                    def url = "http://confluence:8090/spaces/flyingpdf/pdfpageexport.action?pageId=${PReB_PAGE_ID}"
+
+                    sh """
+                        curl -v -L -u "adauto:adauto" -H "X-Atlassian-Token: no-check" "${url}" -o "preb.pdf"
+                    """
+
+                    echo "PDF saved as preb.pdf"
+                }
+            }
+        }
     }
 
     post {
