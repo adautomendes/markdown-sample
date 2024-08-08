@@ -109,7 +109,7 @@ pipeline {
                             </html>
                         """,
                         subject: "PReB ${currentDate}",
-                        to: 'adauto.junior@live.com'
+                        to: 'adauto.mendes@ericsson.com'
                     )
                 }
             }
