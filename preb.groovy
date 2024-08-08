@@ -1,13 +1,18 @@
 import java.text.SimpleDateFormat
 import groovy.json.JsonSlurper
 
-def outputFileName = "preb_${getcurrentDateHour("yyyyMMdd_HHmmss")}.pdf"
-def currentDateHour = getcurrentDateHour("MM/dd/yyyy HH:mm:ss")
-def currentDate = getcurrentDateHour("MM/dd/yyyy")
-def mailBody = ''
+def outputFileName = "preb_${getcurrentDateHour('yyyyMMdd_HHmmss')}.pdf"
+def currentDateHour = getcurrentDateHour('MM/dd/yyyy HH:mm:ss')
+def currentDate = getcurrentDateHour('MM/dd/yyyy')
+def listForAcceptance = ''
+def listForApproval = ''
 
 pipeline {
     agent any
+
+    environment {
+        JIRA_TOKEN = 'Basic YWRhdXRvOmFkYXV0bw=='
+    }
 
     stages {
         stage('Export PReB to PDF') {
@@ -33,17 +38,17 @@ pipeline {
                         curl -u "adauto:adauto" -X POST -H "X-Atlassian-Token: nocheck" -F "file=@${outputFileName}" -F "comment=File attached at ${currentDateHour}" "${url}" 2>/dev/null
                     """
 
-                    echo "PDF uploaded to http://localhost:8090/display/EAI/PReB"
+                    echo 'PDF uploaded to http://localhost:8090/display/EAI/PReB'
                 }
             }
         }
 
-        stage('Get Jira issues') {
+        stage('Get Initiatives for Acceptance') {
             steps {
                 script {
-                    def headers = [[name: 'Authorization', value: "Basic YWRhdXRvOmFkYXV0bw=="]]
-                    def response = httpRequest(
-                        url: 'http://jira:8080/rest/api/2/search?jql=filter%3D10400&fields=key%2Csummary',
+                    def headers = [[name: 'Authorization', value: env.JIRA_TOKEN]]
+                    def responseForAcceptance = httpRequest(
+                        url: 'http://jira:8080/rest/api/2/search?jql=filter=10400&fields=key,summary',
                         httpMode: 'GET',
                         contentType: 'APPLICATION_JSON',
                         customHeaders: headers,
@@ -52,25 +57,59 @@ pipeline {
                     )
 
                     def jsonSlurper = new JsonSlurper()
-                    def jsonResponse = jsonSlurper.parseText(response.content)
+                    def jsonResponseForAcceptance = jsonSlurper.parseText(responseForAcceptance.content)
 
-                    jsonResponse.issues.each { issue -> 
-                        mailBody += "${issue.key} - ${issue.fields.summary} - Link: http://localhost:8080/browse/${issue.key}\n"
+                    jsonResponseForAcceptance.issues.each { issue ->
+                        listForAcceptance += "<li><a href=\"http://localhost:8080/browse/${issue.key}\">${issue.key}</a> - ${issue.fields.summary}"
                     }
 
-                    println "Body: ${mailBody}"
+                    println "List for acceptance: ${listForAcceptance}"
                 }
             }
         }
 
-        stage('Send email for PReB') {
+        stage('Get Initiatives for Approval') {
             steps {
                 script {
-                    mail(
-                        from: 'adauto.junior@live.com',
-                        to: 'adauto.junior@live.com',
+                    def headers = [[name: 'Authorization', value: env.JIRA_TOKEN]]
+                    def responseForApproval = httpRequest(
+                        url: 'http://jira:8080/rest/api/2/search?jql=filter=10500&fields=key,summary',
+                        httpMode: 'GET',
+                        contentType: 'APPLICATION_JSON',
+                        customHeaders: headers,
+                        validResponseCodes: '200',
+                        consoleLogResponseBody: true
+                    )
+
+                    def jsonSlurper = new JsonSlurper()
+                    def jsonResponseForApproval = jsonSlurper.parseText(responseForApproval.content)
+
+                    jsonResponseForApproval.issues.each { issue ->
+                        listForApproval += "<li><a href=\"http://localhost:8080/browse/${issue.key}\">${issue.key}</a> - ${issue.fields.summary}"
+                    }
+
+                    println "List for approval: ${listForApproval}"
+                }
+            }
+        }
+
+        stage('Send email-ext for PReB') {
+            steps {
+                script {
+                    emailext(
+                        body: """
+                            <html>
+                                <body>
+                                    <h2>BUCs for PReB at ${currentDate}</h2>
+                                    <p>For acceptance:</p>
+                                    <ul>${listForAcceptance}</ul>
+                                    <p>For approval:</p>
+                                    <ul>${listForApproval}</ul>
+                                </body>
+                            </html>
+                        """,
                         subject: "PReB ${currentDate}",
-                        body: "BUCs for PReB at ${currentDate}:\n\n${mailBody}"
+                        to: 'adauto.junior@live.com'
                     )
                 }
             }
