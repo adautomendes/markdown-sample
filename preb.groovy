@@ -93,7 +93,7 @@ pipeline {
             }
         }
 
-        stage('Send email-ext for PReB') {
+        stage('Send email for PReB') {
             steps {
                 script {
                     emailext(
