@@ -27,7 +27,7 @@ def confluencePayload = """
     },
     "ancestors": [
         {
-            "id": "4227073"
+            "id": "{{parentPage}}"
         }
     ],
     "body": {
@@ -88,6 +88,7 @@ pipeline {
                     confluencePageTemplate = confluencePageTemplate.replace("\n", "\\n")
 
                     confluencePayload = confluencePayload.replace('{{template}}', confluencePageTemplate)
+                    confluencePayload = confluencePayload.replace('{{parentPage}}', ${PReB_PAGE_ID})
 
                     echo "Request payload:\n${confluencePayload}"
 
