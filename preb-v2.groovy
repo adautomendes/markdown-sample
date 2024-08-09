@@ -182,8 +182,8 @@ def getWikiTableList(issueList) {
 
     issueTable += "||Key||Summary||Reporter||Assignee||Outcome||\n"
     issueList.issues.each { issue ->
-        def reporter = issue.fields.reporter != null ? "[~${issue.fields.reporter.displayName}]" : "N/A"
-        def assignee = issue.fields.assignee != null ? "[~${issue.fields.assignee.displayName}]" : "N/A"
+        def reporter = issue.fields.reporter != null ? "[~${issue.fields.reporter.name}]" : "N/A"
+        def assignee = issue.fields.assignee != null ? "[~${issue.fields.assignee.name}]" : "N/A"
 
         issueTable += "|[${issue.key}|http://localhost:8080/browse/${issue.key}]|${issue.fields.summary}|${reporter}|${assignee}| |\n"
     }
