@@ -1,10 +1,20 @@
+// Plugins needed: Job DSL
 pipelineJob('pipeline-1') {
     description('Pipeline 1')
     logRotator {
         numToKeep(10)
     }
+    properties {
+        pipelineTriggers {
+            triggers {
+                cron {
+                    spec('*/2 * * * *')
+                }
+            }
+        }
+    }
     parameters {
-        stringParam('name', 'Pipeline 1', 'Name of the pipeline')
+        stringParam('name', 'Pipeline 1', 'Name of pipeline')
     }
     definition {
         cpsScm {
@@ -27,8 +37,17 @@ pipelineJob('pipeline-2') {
     logRotator {
         numToKeep(10)
     }
+    properties {
+        pipelineTriggers {
+            triggers {
+                cron {
+                    spec('*/2 * * * *')
+                }
+            }
+        }
+    }
     parameters {
-        stringParam('name', 'Pipeline 2', 'Name of the pipeline')
+        stringParam('name', 'Pipeline 2', 'Name of pipeline')
     }
     definition {
         cpsScm {
