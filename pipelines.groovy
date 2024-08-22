@@ -14,7 +14,7 @@ pipelineJob('pipeline-1') {
                         url('https://github.com/adautomendes/markdown-sample')
                         credentials('Github - adautomendes')
                     }
-                    branches('master')
+                    branches('main')
                     scriptPath('pipelines/pipeline1.groovy')
                 }
             }
@@ -38,7 +38,7 @@ pipelineJob('pipeline-2') {
                         url('https://github.com/adautomendes/markdown-sample')
                         credentials('Github - adautomendes')
                     }
-                    branches('master')
+                    branches('main')
                     scriptPath('pipelines/pipeline2.groovy')
                 }
             }
